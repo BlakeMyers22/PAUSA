@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAUSA - Public Adjuster USA Network</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f5;
+            color: #333;
+        }
+        header {
+            background-color: #003366;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        h1 {
+            color: #003366;
+        }
+        .container {
+            margin: 20px;
+        }
+        .wallet-status {
+            margin-top: 10px;
+        }
+        #claimForm {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            background-color: #003366;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #00509e;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Public Adjuster USA Network (PAUSA)</h1>
+    </header>
+
+    <div class="container">
+        <h2>Connect Your Wallet</h2>
+        <button id="connectButton">Connect MetaMask</button>
+        <p class="wallet-status" id="walletStatus">Not Connected</p>
+
+        <form id="claimForm" enctype="multipart/form-data" style="display:none;">
+            <h2>Submit Your Claim</h2>
+            <label for="notes">Notes:</label><br>
+            <textarea id="notes" name="notes" rows="4" cols="50" placeholder="Enter notes about the damage"></textarea><br><br>
+
+            <label for="images">Upload Images:</label>
+            <input type="file" id="images" name="images" multiple accept="image/*"><br><br>
+
+            <label for="videos">Upload Videos:</label>
+            <input type="file" id="videos" name="videos" multiple accept="video/*"><br><br>
+
+            <button type="button" onclick="submitForm()">Submit</button>
+        </form>
+
+        <p id="responseMessage"></p>
+    </div>
+
+    <script>
+        let walletAddress = null;
+
+        // Function to connect MetaMask wallet
+        async function connectWallet() {
+            if (window.ethereum) {
+                try {
+                    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                    walletAddress = accounts[0];
+                    document.getElementById('walletStatus').innerText = "Connected: " + walletAddress;
+                    document.getElementById('claimForm').style.display = 'block';
+                } catch (error) {
+                    console.error("Error connecting wallet", error);
+                    document.getElementById('walletStatus').innerText = "Error connecting wallet";
+                }
+            } else {
+                document.getElementById('walletStatus').innerText = "MetaMask is not installed";
+            }
+        }
+
+        // Button click event for connecting MetaMask
+        document.getElementById('connectButton').addEventListener('click', connectWallet);
+
+        // Form submission (for later AI integration)
+        function submitForm() {
+            const form = document.getElementById('claimForm');
+            const formData = new FormData(form);
+
+            fetch('YOUR_BACKEND_URL', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('responseMessage').innerText = "Claim Submitted!";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('responseMessage').innerText = "Error submitting claim.";
+            });
+        }
+    </script>
+</body>
+</html>
